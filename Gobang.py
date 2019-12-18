@@ -45,11 +45,17 @@ class Gobang:
                                       self.__radius + y * self.__radius * 2)
 
     def __get_current_position(self, x, y):
+        """
+        根据当前鼠标位置计算棋子位置
+        """    
         selected_x = max(0, min(int(x / (self.__radius * 2)), self.__width - 1))
         selected_y = max(0, min(int(y / (self.__radius * 2)), self.__height - 1))
         return (selected_x, selected_y)
 
     def __color_continius(self, arr, color):
+        """
+        判断某一颜色的棋子最大连续个数
+        """
         max_count = 1
         _count = 1
         for i in range(0, len(arr) - 1):
@@ -64,6 +70,9 @@ class Gobang:
         return max_count
             
     def __check_win(self, selected_x, selected_y, color):
+        """
+        判断某一颜色棋子的输赢，以当前棋子为中心，4子为半径判断四个方向即可
+        """
         _row = []
         for x in range(selected_x - 4, selected_x + 5):
             if x >= 0 and x < self.__width:
@@ -94,8 +103,25 @@ class Gobang:
             return True
         return False
 
+    def __is_draw(self):
+        """
+        判断是否是和棋
+        """
+        is_draw = True
+        for x in self.__pieces:
+            for y in x:
+                if y == Piece.NotDefiend:
+                    is_draw = False
+        return is_draw
+
     def __bind_mouse_functions(self):
+        """
+        绑定鼠标事件
+        """
         def move_handler(event):
+            """
+            鼠标移过棋盘，显示棋子
+            """
             selected_x, selected_y = self.__get_current_position(event.x, event.y)
             color = "black" if self.__color == Piece.Black else "white"
             if selected_x != self.__last_x or selected_y != self.__last_y:
@@ -109,8 +135,12 @@ class Gobang:
                 self.__last_y = selected_y
          
         def click_handler(event):
+            """
+            鼠标点击棋盘，落子并判断输赢
+            """
             selected_x, selected_y = self.__get_current_position(event.x, event.y)
             if self.__pieces[selected_x][selected_y] != Piece.NotDefiend:
+                # 棋子已经存在，不可落子
                 pass
             else:
                 self.__pieces[selected_x][selected_y] = self.__color
@@ -120,7 +150,11 @@ class Gobang:
                                               self.__radius + selected_x * self.__radius * 2 + self.__radius,
                                               self.__radius + selected_y * self.__radius * 2 + self.__radius,
                                               fill=color)
-                if self.__check_win(selected_x, selected_y, self.__color):
+                if self.__is_draw():
+                    message = "draw chess!"
+                    showinfo("Info", message)
+                    self.__reset()
+                elif self.__check_win(selected_x, selected_y, self.__color):
                     message = "{} win!".format(color)
                     showinfo("Info", message)
                     self.__reset()
@@ -133,6 +167,9 @@ class Gobang:
         self.__canvas.bind('<Button-1>', click_handler)
 
     def __reset(self):
+        """
+        重置游戏
+        """
         self.__canvas.quit()
         self.__root.quit()
         self.__root.destroy()
@@ -145,5 +182,6 @@ class Gobang:
         self.__bind_mouse_functions()
         self.__root.mainloop()
 
-gobang = Gobang()
-gobang.start()
+if __name__ == "__main__":
+    gobang = Gobang()
+    gobang.start()
