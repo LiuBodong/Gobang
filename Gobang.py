@@ -149,13 +149,15 @@ class Gobang:
                                               self.__radius + selected_y * self.__radius * 2 - self.__radius,
                                               self.__radius + selected_x * self.__radius * 2 + self.__radius,
                                               self.__radius + selected_y * self.__radius * 2 + self.__radius,
-                                              fill=color)
-                if self.__is_draw():
-                    message = "draw chess!"
+                                              fill=color)        
+                # 如果某一方赢了，则重置游戏
+                if self.__check_win(selected_x, selected_y, self.__color):
+                    message = "{} win!".format(color)
                     showinfo("Info", message)
                     self.__reset()
-                elif self.__check_win(selected_x, selected_y, self.__color):
-                    message = "{} win!".format(color)
+                # 否则判断是否是和棋，如果是和棋，则重置
+                elif self.__is_draw():
+                    message = "draw chess!"
                     showinfo("Info", message)
                     self.__reset()
                 if self.__color == Piece.White:
