@@ -123,7 +123,8 @@ class Gobang:
             鼠标移过棋盘，显示棋子
             """
             selected_x, selected_y = self.__get_current_position(event.x, event.y)
-            color = "black" if self.__color == Piece.Black else "white"
+            # 如果已经有棋子了，当鼠标移动到点上时显示红色
+            color = ("black" if self.__color == Piece.Black else "white") if self.__pieces[selected_x][selected_y] == Piece.NotDefiend else "red"
             if selected_x != self.__last_x or selected_y != self.__last_y:
                 self.__canvas.delete(self.__last_point)
                 self.__last_point = self.__canvas.create_oval(self.__radius + selected_x * self.__radius * 2 - self.__radius,
